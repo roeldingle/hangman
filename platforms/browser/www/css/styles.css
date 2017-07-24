@@ -45,3 +45,10 @@ img.result{
   height: 140px;
   width: 140px;
 }
+
+.hint-container{
+  text-align: center;
+  color: red;
+  font-size: 12px;
+  font-style: italic;
+}
