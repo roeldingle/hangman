@@ -40,6 +40,8 @@ var collection_of_words = [
 ];
 
 
+var g_iCount = 11;
+
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -62,7 +64,12 @@ $$(document).on('deviceready', function() {
     });
 
     /*timer*/
-    countDown();
+
+
+     var timer = new Timer(function() {
+        var g_iCount = 11;
+        startCountdown();
+      }, 1000);
 
 });
 
@@ -93,7 +100,14 @@ function reset(){
     });
 
      /*timer*/
-    countDown();
+     // stop the timer
+    
+    timer.start();
+     // var timer = new Timer(function() {
+     //    var g_iCount = 11;
+     //    startCountdown();
+     //  }, 1000);
+     
 
     
 }
@@ -194,9 +208,13 @@ function wordChecker(input_elem){
     var user_input_word = user_input_word.join("");
 
     if(correct_word === user_input_word){
-         myApp.alert('<img class="result" src="img/life/winner.gif" />', 'Winner!', reset());
+         myApp.alert('<img class="result" src="img/life/winner.gif" />', 'Winner!', function () {
+            reset();
+        });
     }else{
-        myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', reset());
+        myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
+            reset();
+        });
     }
 
 }
@@ -214,24 +232,8 @@ function hasEmptyValueChecker(elem){
 
 
 
-function countDown(){
-  /*timer*/
-    var count=11;
-    var counter=setInterval(timer, 1000);
-    function timer(){
-      count=count-1;
-      if (count <= 0){
-         myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
-            reset();
 
-        });
-         clearInterval(counter);
-         return;
-      }
-      $("#timer").html(count);
-    }
 
-}
 
 function getShuffledArray (arr){
     let newArr = arr.slice();
@@ -243,6 +245,54 @@ function getShuffledArray (arr){
 }
 
 
-/**/
+function startCountdown(){
+    console.log(g_iCount);
+   if((g_iCount - 1) >= 0){
+       g_iCount = g_iCount - 1;
+       //numberCountdown.innerText = '00:00.0' + g_iCount;
+       $(".timer-container").html(g_iCount);
+
+       if(g_iCount === 0){
+            myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
+                reset();
+                
+            });
+            timer.stop();
+                g_iCount = 11;
+            return;
+            
+
+       }
+   }
+}
+
+
+/*timer object*/
+function Timer(fn, t) {
+    var timerObj = setInterval(fn, t);
+
+    this.stop = function() {
+        if (timerObj) {
+            clearInterval(timerObj);
+            timerObj = null;
+        }
+        return this;
+    }
+
+    // start timer using current settings (if it's not already running)
+    this.start = function() {
+        if (!timerObj) {
+            this.stop();
+            timerObj = setInterval(fn, t);
+        }
+        return this;
+    }
+
+    // start with new interval, stop current interval
+    this.reset = function(newT) {
+        t = newT;
+        return this.stop().start();
+    }
+}
 
 

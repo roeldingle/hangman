@@ -47,7 +47,7 @@ img.result{
   width: 140px;
 }
 
-.hint-container{
+.hint-container, .timer-container{
   text-align: center;
   font-size: 16px;
 }
