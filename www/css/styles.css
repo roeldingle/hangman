@@ -19,7 +19,8 @@
 }
 .card{
 	padding: 20px;
-    text-align: center;
+  text-align: center;
+  margin-top: 22%;
 }
 .banner-img{
 	width: 80%;
@@ -48,5 +49,11 @@ img.result{
 
 .hint-container{
   text-align: center;
-  font-size: 12px;
+  font-size: 16px;
+}
+
+/*override*/
+.buttons-row .button {
+    max-width: 74px;
+    height: 35px;
 }
