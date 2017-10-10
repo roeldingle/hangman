@@ -42,6 +42,7 @@ var collection_of_words = [
 const ITEM_COUNT = 3;
 var item_to_answer = ITEM_COUNT;
 
+
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
 
@@ -62,9 +63,9 @@ $$(document).on('deviceready', function() {
         inputLetter(elem);
     });
 
-    //var item_to_answer = item_to_answer_set;
     
     stopwatch.start();
+
 
 });
 
@@ -109,6 +110,7 @@ function timeChecker(){
 
         myApp.alert('Your Score : ' + correct_answers + ' / ' + ITEM_COUNT, 'Thanks for playing!', function () {
             location.reload();
+            return;
         });
     }
 
@@ -214,14 +216,17 @@ function wordChecker(input_elem){
     
 
     if(correct_word === user_input_word){
-        myApp.alert('<img class="result" src="img/life/winner.gif" />', 'Winner!', function () {
+
+        myApp.alert('<img class="result" src="img/life/winner.gif" />', 'Correct!', function () {
             stopwatch.lap();
             reset();
         });
     }else{
-        myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
+        myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Failed!', function () {
             reset();
+
          });
+
     }
 
 }
@@ -238,8 +243,6 @@ function hasEmptyValueChecker(elem){
 }
 
 
-
-
 function getShuffledArray (arr){
     let newArr = arr.slice();
     for (var i = newArr.length - 1; i > 0; i--) {
@@ -250,6 +253,54 @@ function getShuffledArray (arr){
 }
 
 
-/**/
+function startCountdown(){
+    console.log(g_iCount);
+   if((g_iCount - 1) >= 0){
+       g_iCount = g_iCount - 1;
+       //numberCountdown.innerText = '00:00.0' + g_iCount;
+       $(".timer-container").html(g_iCount);
+
+       if(g_iCount === 0){
+            myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
+                reset();
+                
+            });
+            timer.stop();
+                g_iCount = 11;
+            return;
+            
+
+       }
+   }
+}
+
+
+/*timer object*/
+function Timer(fn, t) {
+    var timerObj = setInterval(fn, t);
+
+    this.stop = function() {
+        if (timerObj) {
+            clearInterval(timerObj);
+            timerObj = null;
+        }
+        return this;
+    }
+
+    // start timer using current settings (if it's not already running)
+    this.start = function() {
+        if (!timerObj) {
+            this.stop();
+            timerObj = setInterval(fn, t);
+        }
+        return this;
+    }
+
+    // start with new interval, stop current interval
+    this.reset = function(newT) {
+        t = newT;
+        return this.stop().start();
+    }
+}
 
 
