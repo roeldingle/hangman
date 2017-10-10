@@ -47,10 +47,16 @@ img.result{
   width: 140px;
 }
 
-.timer-container,.hint-container{
+.timer-container,.hint-container, .title-container{
 
   text-align: center;
   font-size: 16px;
+}
+
+.title-container{
+  font-weight: bold;
+  font-size: 18px;
+  margin:10px 0;
 }
 
 /*override*/

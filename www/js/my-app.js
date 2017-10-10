@@ -1,52 +1,22 @@
 // Initialize app
 var myApp = new Framework7();
-
-
-// If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Dom7;
-
-// Add view
 var mainView = myApp.addView('.view-main', {
-    // Because we want to use dynamic navbar, we need to enable it for this view:
     dynamicNavbar: true
 });
 
-var collection_of_words = [
-
-    {
-        "word": [ 'T','A','B','L','E'],
-        "hint": "the star of the feast"
-    },
-
-    {
-        "word" : ['C','H','A','I','R'],
-        "hint": "sit down and talk for a while"
-    },
-
-    {
-        "word" : ['D','O','O','R'],
-        "hint" : "wherever you may lead"
-    },
-
-    {
-        "word" : ['W','I','N','D','O','W'],
-        "hint" : "open your eyes and see"
-    },
-
-    {
-        "word" : ['C','L','O','C', 'K'],
-        "hint" : "tool for a unstoppable force"
-    }
-];
-
-const ITEM_COUNT = 3;
-var item_to_answer = ITEM_COUNT;
 
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
 
+    var set_category = sessionStorage.getItem('set_category');
+    $('#category').val(set_category);
+    $('.title-container').html(set_category + 'S');
+
+
     /*load new word*/
+    var collection_of_words = getCategory();
     var item = collection_of_words[Math.floor(Math.random()*collection_of_words.length)];
 
     var get_word = getWord(item.word);
@@ -63,15 +33,45 @@ $$(document).on('deviceready', function() {
         inputLetter(elem);
     });
 
-    
+    /*stopwatch start*/
     stopwatch.start();
-
 
 });
 
-
-
+$$('.item-title').on('click', function() {
+    var category = $(this).attr('alt');
+    sessionStorage.removeItem('set_category');
+    sessionStorage.setItem('set_category', category);
+    location.reload();
+});
 /***********************************custom function***********************************/
+
+/**/
+function getCategory(){
+
+    var category = $('#category').val();
+
+    switch(category){
+        case "FOOD":
+        return_data = foods;
+        break;
+
+        case "THING":
+        return_data = things;
+        break;
+
+        case "ANIMAL":
+        return_data = animals;
+        break;
+
+        default:
+        return_data = animals;
+        break;
+    }
+
+    $('#category').val(category);
+    return return_data;
+}
 
 /*reset app*/
 function reset(){
@@ -80,6 +80,7 @@ function reset(){
     $('.banner-img').attr('alt', 0);
 
     /*load new word*/
+    var collection_of_words = getCategory();
     var item = collection_of_words[Math.floor(Math.random()*collection_of_words.length)];
     var get_word = getWord(item.word);
     $('.text-container').html(get_word);
@@ -101,22 +102,6 @@ function reset(){
 }
 
 
-function timeChecker(){
-    var reach_limit = false;
-    if(item_to_answer <= 0){
-        reach_limit = true;
-
-        var correct_answers = $('.results li').length;
-
-        myApp.alert('Your Score : ' + correct_answers + ' / ' + ITEM_COUNT, 'Thanks for playing!', function () {
-            location.reload();
-            return;
-        });
-    }
-
-    return reach_limit;
-    
-}
 
 /*get word and display*/
 function getWord(word){
@@ -154,9 +139,7 @@ function getKeyboard(word_item){
             html += '</p><p class="buttons-row">';
         }
     });
-
     html += '</p>';
-
     return html;
    
 }
@@ -213,10 +196,7 @@ function wordChecker(input_elem){
     var correct_word = correct_word.join("");
     var user_input_word = user_input_word.join("");
 
-    
-
     if(correct_word === user_input_word){
-
         myApp.alert('<img class="result" src="img/life/winner.gif" />', 'Correct!', function () {
             stopwatch.lap();
             reset();
@@ -226,9 +206,27 @@ function wordChecker(input_elem){
             reset();
 
          });
-
     }
 
+}
+
+function timeChecker(){
+    var reach_limit = false;
+    if(item_to_answer <= 0){
+        reach_limit = true;
+        var correct_answers = $('.results li').length;
+        var time_spent = $('.timer-container').html();
+
+        var html = '';
+        html += 'Your Score : ' + correct_answers + ' / ' + ITEM_COUNT + '<br />';
+        html += 'Time spent : ' + time_spent;
+
+        myApp.alert( html , 'Thanks for playing!', function () {
+            location.reload();
+            return;
+        });
+    }
+    return reach_limit;
 }
 
 function hasEmptyValueChecker(elem){
@@ -242,7 +240,6 @@ function hasEmptyValueChecker(elem){
     return dataValid;
 }
 
-
 function getShuffledArray (arr){
     let newArr = arr.slice();
     for (var i = newArr.length - 1; i > 0; i--) {
@@ -250,28 +247,6 @@ function getShuffledArray (arr){
         [newArr[i], newArr[rand]]=[newArr[rand], newArr[i]];
     }
     return newArr;
-}
-
-
-function startCountdown(){
-    console.log(g_iCount);
-   if((g_iCount - 1) >= 0){
-       g_iCount = g_iCount - 1;
-       //numberCountdown.innerText = '00:00.0' + g_iCount;
-       $(".timer-container").html(g_iCount);
-
-       if(g_iCount === 0){
-            myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
-                reset();
-                
-            });
-            timer.stop();
-                g_iCount = 11;
-            return;
-            
-
-       }
-   }
 }
 
 
