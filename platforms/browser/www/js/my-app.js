@@ -39,7 +39,8 @@ var collection_of_words = [
     }
 ];
 
-
+const ITEM_COUNT = 3;
+var item_to_answer = ITEM_COUNT;
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -61,8 +62,9 @@ $$(document).on('deviceready', function() {
         inputLetter(elem);
     });
 
-    /*timer*/
-    countDown();
+    //var item_to_answer = item_to_answer_set;
+    
+    stopwatch.start();
 
 });
 
@@ -92,9 +94,25 @@ function reset(){
         inputLetter(elem);
     });
 
-     /*timer*/
-    countDown();
+    item_to_answer = item_to_answer - 1;
+    var limit_checker = timeChecker();
+     
+}
 
+
+function timeChecker(){
+    var reach_limit = false;
+    if(item_to_answer <= 0){
+        reach_limit = true;
+
+        var correct_answers = $('.results li').length;
+
+        myApp.alert('Your Score : ' + correct_answers + ' / ' + ITEM_COUNT, 'Thanks for playing!', function () {
+            location.reload();
+        });
+    }
+
+    return reach_limit;
     
 }
 
@@ -193,10 +211,17 @@ function wordChecker(input_elem){
     var correct_word = correct_word.join("");
     var user_input_word = user_input_word.join("");
 
+    
+
     if(correct_word === user_input_word){
-         myApp.alert('<img class="result" src="img/life/winner.gif" />', 'Winner!', reset());
+        myApp.alert('<img class="result" src="img/life/winner.gif" />', 'Winner!', function () {
+            stopwatch.lap();
+            reset();
+        });
     }else{
-        myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', reset());
+        myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
+            reset();
+         });
     }
 
 }
@@ -214,24 +239,6 @@ function hasEmptyValueChecker(elem){
 
 
 
-function countDown(){
-  /*timer*/
-    var count=11;
-    var counter=setInterval(timer, 1000);
-    function timer(){
-      count=count-1;
-      if (count <= 0){
-         myApp.alert('<img class="result" src="img/life/loser.gif" />', 'Loser!', function () {
-            reset();
-
-        });
-         clearInterval(counter);
-         return;
-      }
-      $("#timer").html(count);
-    }
-
-}
 
 function getShuffledArray (arr){
     let newArr = arr.slice();
